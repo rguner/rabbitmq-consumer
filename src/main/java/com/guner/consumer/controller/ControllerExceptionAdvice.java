@@ -1,6 +1,6 @@
 package com.guner.consumer.controller;
 
-import com.guner.consumer.exception.ResourceNotFoundException;
+import com.guner.consumer.exception.MessageNotSuitableException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,13 +45,13 @@ public class ControllerExceptionAdvice {
         return getStringObjectMap(missingServletRequestParameterException, handlerMethod, request);
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
+    @ExceptionHandler(value = MessageNotSuitableException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public Map<String, Object> resourceNotFoundExceptionHandler(ResourceNotFoundException resourceNotFoundException,
+    public Map<String, Object> resourceNotFoundExceptionHandler(MessageNotSuitableException messageNotSuitableException,
                                                                 HandlerMethod handlerMethod, HttpServletRequest request) {
-        log.error("ResourceNotFoundException occurred: ", resourceNotFoundException);
-        return getStringObjectMap(resourceNotFoundException, handlerMethod, request);
+        log.error("ResourceNotFoundException occurred: ", messageNotSuitableException);
+        return getStringObjectMap(messageNotSuitableException, handlerMethod, request);
     }
 
 
