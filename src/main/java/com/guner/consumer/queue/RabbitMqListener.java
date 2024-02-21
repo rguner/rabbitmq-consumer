@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +38,9 @@ public class RabbitMqListener {
 
     @RabbitListener(queues = "${single-consumer.queue.name.single-queue}")
     public void listenWithSpringMessage(org.springframework.messaging.Message<ChargingRecord> messageChargingRecord,
-                                             Channel channel) {
+                                             Channel channel,
+                                             @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
         log.debug("Charging Message Received, thread: {}", Thread.currentThread().getName());
-        long deliveryTag = messageChargingRecord.getHeaders().get(AmqpHeaders.DELIVERY_TAG, Long.class);
         if (messageChargingRecord.getPayload().getSourceGsm().endsWith("0")) {
             log.error("Charging Message Source Gsm ends with 0, NACK");
             try {
