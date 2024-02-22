@@ -51,7 +51,30 @@ public class RabbitMqConfiguration {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(converter());
+
+        /* tried bu not worked, retries continuously
+        RetryTemplate retry = new RetryTemplate();
+        ExponentialBackOffPolicy policy = new ExponentialBackOffPolicy();
+        policy.setInitialInterval(3000); //  3sn
+        policy.setMultiplier(2);
+        policy.setMaxInterval(10000); // 10 sn
+        retry.setBackOffPolicy(policy);
+        factory.setRetryTemplate(retry);
+        or
+        spring:
+          rabbitmq:
+            listener:
+              simple:
+                retry:
+                  enabled: true
+                  initial-interval: 3s
+                  max-attempts: 6
+                  max-interval: 10s
+                  multiplier: 2
+        */
+
         // factory.setDeBatchingEnabled(true);
+
         return factory;
     }
 
