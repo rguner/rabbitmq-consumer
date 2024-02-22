@@ -22,6 +22,7 @@ public class RabbitMqListener {
     private final ChargingRecordService chargingRecordService;
 
 
+    // NACK with throwing Exception
     //@RabbitListener(queues = "${single-consumer.queue.name.single-queue}", containerFactory = "rabbitListenerContainerFactory")
     /*
     @RabbitListener(queues = "${single-consumer.queue.name.single-queue}")
@@ -36,7 +37,7 @@ public class RabbitMqListener {
 
      */
 
-    @RabbitListener(queues = "${single-consumer.queue.name.single-queue}")
+    @RabbitListener(queues = "${single-consumer.queue.name.single-queue}", ackMode = "MANUAL")
     public void listenWithSpringMessage(org.springframework.messaging.Message<ChargingRecord> messageChargingRecord,
                                              Channel channel,
                                              @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
@@ -49,12 +50,13 @@ public class RabbitMqListener {
             } catch (Exception e) {
                 log.error("Error while acknowledging message", e);
             }
-        }
-        chargingRecordService.createChargingRecord(messageChargingRecord.getPayload());
-        try {
-            channel.basicAck(deliveryTag, false);
-        } catch (Exception e) {
-            log.error("Error while acknowledging message", e);
+        } else {
+            chargingRecordService.createChargingRecord(messageChargingRecord.getPayload());
+            try {
+                channel.basicAck(deliveryTag, false);
+            } catch (Exception e) {
+                log.error("Error while acknowledging message", e);
+            }
         }
     }
 }
