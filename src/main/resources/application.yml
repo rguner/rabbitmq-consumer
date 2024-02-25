@@ -33,7 +33,7 @@ single-consumer:
     name:
       single-queue: single-queue
   topic-exchange:
-    name: single-topic-exchange
+    name: single-exchange
   routing:
     key:
       single-routing: single-routing
